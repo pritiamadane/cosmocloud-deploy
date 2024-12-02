@@ -1,4 +1,4 @@
-apiVersion: v2
+apiVersion: v3.16.2
 name: cosmocloud-deploy
 description: Helm Chart to deploy Backend, Frontend, and Redis DB
 type: application
