@@ -1,0 +1,72 @@
+{{/* Backend Deployment */}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.backend.service.name }}
+  labels:
+    app: backend
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+      - name: backend
+        image: {{ .Values.backend.image }}
+        env:
+        - name: REDIS_URI
+          value: redis://{{ .Values.redis.service.name }}:{{ .Values.redis.service.port }}
+
+---
+
+{{/* Frontend Deployment */}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.frontend.service.name }}
+  labels:
+    app: frontend
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+      - name: frontend
+        image: {{ .Values.frontend.image }}
+        env:
+        - name: BACKEND_URL
+          value: http://{{ .Values.backend.service.name }}:{{ .Values.backend.service.port }}
+
+---
+
+{{/* Redis Deployment */}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.redis.service.name }}
+  labels:
+    app: redis
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: redis
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+      containers:
+      - name: redis
+        image: {{ .Values.redis.image }}
